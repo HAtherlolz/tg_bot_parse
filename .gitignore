@@ -1,0 +1,14 @@
+venv/
+env/
+.vscode/
+
+.idea/
+.env
+__pycache__/
+
+
+.DS_Store
+*.pyc
+
+token.json
+tg-bot-token.json

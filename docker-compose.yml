@@ -1,0 +1,10 @@
+version: '3.7'
+services:
+  bot:
+    container_name: tg_bot
+    build: .
+    restart: always
+    env_file: .env
+    command: sh -c "python main.py"
+    volumes:
+     - .:/app
