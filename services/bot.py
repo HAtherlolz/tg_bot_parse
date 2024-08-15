@@ -7,6 +7,7 @@ from telegram.ext import ContextTypes
 
 from utils.logs import log
 from services.google import Google
+from cfg.config import settings
 
 
 class Bot:
@@ -20,6 +21,9 @@ class Bot:
         if update.message is None:
             log.info("Received an update without message")
             return
+
+        if update.message.chat.title != settings.CHAT_TITLE:
+            log.info(f"Wrong chat - {update.message.chat.title}")
 
         chat_id = update.message.chat_id
         text = update.message.text

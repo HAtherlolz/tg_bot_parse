@@ -14,5 +14,8 @@ class Settings(BaseConfig):
     # GOOGLE SHEETS TOKEN
     GGL_SHEET_TOKEN: str = os.getenv("GGL_SHEET_TOKEN")
 
+    # CHAT TITLE
+    CHAT_TITLE: str = os.getenv("CHAT_TITLE")
+
 
 settings = Settings()

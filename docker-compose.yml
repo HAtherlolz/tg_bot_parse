@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   bot:
-    container_name: tg_bot
+    container_name: tg_bot_parse
     build: .
     restart: always
     env_file: .env
