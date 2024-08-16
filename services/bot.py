@@ -28,6 +28,10 @@ class Bot:
         chat_id = update.message.chat_id
         text = update.message.text
 
+        if text.count("-") <= 4:
+            log.info("Received an update without much '-'s")
+            return
+
         utc_date_time = update.message.date
         gmt_plus_3 = ZoneInfo('Etc/GMT-3')  # 'Etc/GMT-3' corresponds to GMT+3
         local_date_time = utc_date_time.astimezone(gmt_plus_3)
@@ -39,7 +43,7 @@ class Bot:
         parsed_msg = cls.message_parser(msg=text, date_time=date_time)
         log.info(f"Parsed message: {parsed_msg}")
 
-            # Google.update_sht(parsed_msg)
+        Google.update_sht(parsed_msg)
 
     @classmethod
     def message_parser(cls, msg: str, date_time: str) -> List:
@@ -57,7 +61,6 @@ class Bot:
         for line in msg:
             if "-" in line or (":" in line and "gmt" in line):
                 l = [x.strip() for x in line.split("-")] if "-" in line else [x.strip() for x in line.split()]
-                print("L: \n", l)
                 res_t = {
                     "Message timestamp": date_time,
                     "title": l[0],  # Use the first part as title if not set
@@ -67,7 +70,8 @@ class Bot:
                     "end_time": None,
                     "time_zone": None,
                     "username": None,
-                    "note": None
+                    "note": None,
+                    "Cap day": caps_date,
                 }
                 for i in range(len(l)):
                     if "cap" in l[i].lower() or l[i].isdigit() and res_t["total_caps"] is None:

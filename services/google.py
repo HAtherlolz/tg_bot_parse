@@ -42,16 +42,17 @@ class Google:
         caps_date = data[0].get("Cap day")
         if datetime.today() < datetime.strptime(caps_date, "%Y-%m-%d"):
             caps_tomorrow = True
-            print("Caps for tomorrow")
+            log.info("Caps for tomorrow")
         else:
             caps_tomorrow = False
-            print("Caps for today")
+            log.info("Caps for today")
 
         # Generate the worksheet name based on the current day and date
         sheet_name = cls._get_ggl_sheet_name(caps_tomorrow)
         worksheet = cls.get_or_create_worksheet(sht, sheet_name)
 
         for row in data:
+            del row["Cap day"]
             worksheet.append_row(list(row.values()))
 
     @classmethod
