@@ -28,8 +28,8 @@ class Google:
 
             # Adding titles to the newly created worksheet
             titles = [
-                "Message timestamp", "Cap day", "Affiliate Name", "GEO", "CAP",
-                "Start Time", "End Time", "GMT", "CPA Cost", "Notes"
+                "Date and Time", "Advertiser Name", "GEO", "CAP",
+                "Start Time", "End Time", "GMT", "TG US", "Notes"
             ]
             worksheet.append_row(titles)
         return worksheet

@@ -54,15 +54,14 @@ class Bot:
             caps_date = cls.parse_date(date_time, False)
             log.info("Is for tomorrow?: No")
 
-        title = None
         for line in msg:
             if "-" in line or (":" in line and "gmt" in line):
                 l = [x.strip() for x in line.split("-")] if "-" in line else [x.strip() for x in line.split()]
+                print("L: \n", l)
                 res_t = {
                     "Message timestamp": date_time,
-                    "Cap day": caps_date,
-                    "title": title if title else l[0],  # Use the first part as title if not set
-                    "country": None,
+                    "title": l[0],  # Use the first part as title if not set
+                    "country": l[1],
                     "total_caps": None,
                     "start_time": None,
                     "end_time": None,
@@ -71,9 +70,7 @@ class Bot:
                     "note": None
                 }
                 for i in range(len(l)):
-                    if i == 0 and title is None:
-                        res_t["country"] = l[i].strip()
-                    elif "cap" in l[i].lower() or l[i].isdigit() and res_t["total_caps"] is None:
+                    if "cap" in l[i].lower() or l[i].isdigit() and res_t["total_caps"] is None:
                         res_t["total_caps"] = l[i].replace("cap", "").strip()
                     elif (":" in l[i] or l[i].isdigit()) and "gmt" not in l[i]:
                         res_t["start_time"] = l[i].strip()
@@ -82,11 +79,12 @@ class Bot:
                         if len(time_parts) <= 3:  # case where "17:00 24:00 gmt+3"
                             res_t["end_time"] = time_parts[0].strip()
                             if "gmt" in time_parts[1].strip():
-                                res_t["time_zone"] = time_parts[1].strip()[-1]
+                                res_t["time_zone"] = "gmt +" + str(time_parts[1].strip()[-1])
                         else:  # standard "17:00-24:00 gmt+3"
                             res_t["start_time"] = time_parts[0].strip()
                             res_t["end_time"] = time_parts[1].strip()
-                            res_t["time_zone"] = time_parts[-1].replace("+", "gmt+").replace("-", "gmt-").strip()
+                            res_t["time_zone"] = "gmt +" + str(
+                                time_parts[-1].replace("+", "gmt+").replace("-", "gmt-").strip())
                     elif res_t.get("time_zone") is not None and i == len(l) - 2:
                         res_t["username"] = l[i].strip()
                     elif res_t.get("time_zone") is not None and i == len(l) - 1:
