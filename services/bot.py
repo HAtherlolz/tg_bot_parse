@@ -22,8 +22,8 @@ class Bot:
             log.info("Received an update without message")
             return
 
-        if update.message.chat.title != settings.CHAT_TITLE:
-            log.info(f"Wrong chat - {update.message.chat.title}")
+        # if update.message.chat.title != settings.CHAT_TITLE:
+        #     log.info(f"Wrong chat - {update.message.chat.title}")
 
         chat_id = update.message.chat_id
         text = update.message.text
