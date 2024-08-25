@@ -3,6 +3,7 @@ from typing import List
 from zoneinfo import ZoneInfo
 
 from telegram import Update
+from telegram import Bot as TGBot
 from telegram.ext import ContextTypes
 
 from utils.logs import log
@@ -28,8 +29,14 @@ class Bot:
         chat_id = update.message.chat_id
         text = update.message.text
 
-        if text.count("-") <= 4:
-            log.info("Received an update without much '-'s")
+        if text.count("-") <= 4 or text.count("-") >= 7:
+            log.info("Received an update with wrong number of '-'s")
+            await Bot.send_message_to_chat(chat_id=chat_id, message="Message is invalid. Please provide the correct format")
+            return
+        
+        if text.count(":") >= 4:
+            log.info("Received an update with more than 3 ':'s")
+            await Bot.send_message_to_chat(chat_id=chat_id, message="Message is invalid. Please provide the correct format")
             return
 
         utc_date_time = update.message.date
@@ -111,3 +118,8 @@ class Bot:
             datetime_obj = datetime_obj + timedelta(days=1)
         new_datetime_str = datetime_obj.strftime("%Y-%m-%d")
         return new_datetime_str
+
+    @staticmethod
+    async def send_message_to_chat(chat_id: int, message: str) -> None:
+        bot = TGBot(token=settings.TG_TOKEN)
+        await bot.send_message(chat_id=chat_id, text=message)
