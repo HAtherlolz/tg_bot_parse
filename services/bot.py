@@ -47,10 +47,14 @@ class Bot:
 
         # if text.startswith('#'):
         log.info(f"Message from chat {chat_id}: {text}")
-        parsed_msg = cls.message_parser(msg=text, date_time=date_time)
-        log.info(f"Parsed message: {parsed_msg}")
+        try:
+            parsed_msg = cls.message_parser(msg=text, date_time=date_time)
+            log.info(f"Parsed message: {parsed_msg}")
+            Google.update_sht(parsed_msg)
+        except Exception as e:
+            log.info(f"Error parsing message: {e}")
+            await Bot.send_message_to_chat(chat_id=chat_id, message="Message is invalid. Please provide the correct format")
 
-        Google.update_sht(parsed_msg)
 
     @classmethod
     def message_parser(cls, msg: str, date_time: str) -> List:
@@ -104,7 +108,10 @@ class Bot:
                         res_t["username"] = l[i].strip()
                     elif res_t.get("time_zone") is None and i == len(l) - 1:
                         res_t["note"] = l[i].strip()
-                res.append(res_t)
+                if any(key != "note" and value is None for key, value in res_t.items()):
+                    raise ValueError("Message is invalid. Please provide the correct format")
+                else:
+                    res.append(res_t)
         return res
 
     @staticmethod
