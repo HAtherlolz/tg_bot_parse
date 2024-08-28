@@ -88,6 +88,8 @@ class Bot:
                 for i in range(len(l)):
                     if "cap" in l[i].lower() or l[i].isdigit() and res_t["total_caps"] is None:
                         res_t["total_caps"] = l[i].replace("cap", "").strip()
+                    elif ":" not in l[3]:
+                        raise ValueError("Message is invalid. Please provide the correct format")
                     elif (":" in l[i] or l[i].isdigit()) and "gmt" not in l[i]:
                         res_t["start_time"] = l[i].strip()
                     elif "gmt" in l[i]:
