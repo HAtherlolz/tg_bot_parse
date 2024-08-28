@@ -29,7 +29,8 @@ class Bot:
         chat_id = update.message.chat_id
         text = update.message.text
 
-        if text.count("-") <= 4 or text.count("-") >= 7:
+        # if text.count("-") <= 4 or text.count("-") >= 7:
+        if text.count("-") <=2 or text.count("-") >= 7:
             log.info("Received an update with wrong number of '-'s")
             await Bot.send_message_to_chat(chat_id=chat_id, message="Message is invalid. Please provide the correct format")
             return
@@ -90,16 +91,15 @@ class Bot:
                     elif (":" in l[i] or l[i].isdigit()) and "gmt" not in l[i]:
                         res_t["start_time"] = l[i].strip()
                     elif "gmt" in l[i]:
-                        time_parts = l[i].split(" ")
-                        if len(time_parts) <= 3:  # case where "17:00 24:00 gmt+3"
-                            res_t["end_time"] = time_parts[0].strip()
-                            if "gmt" in time_parts[1].strip():
-                                res_t["time_zone"] = "gmt +" + str(time_parts[1].strip()[-1])
-                        else:  # standard "17:00-24:00 gmt+3"
-                            res_t["start_time"] = time_parts[0].strip()
-                            res_t["end_time"] = time_parts[1].strip()
-                            res_t["time_zone"] = "gmt +" + str(
-                                time_parts[-1].replace("+", "gmt+").replace("-", "gmt-").strip())
+                        if l[i].count(":") == 2:
+                            res_t["start_time"] = l[i].split(" ")[0]
+                            res_t["end_time"] = l[i].split(" ")[1]
+                            res_t["time_zone"] = "gmt +" + str(l[i].split(" ")[-1].strip()[-1])
+                        else:
+                            res_t["end_time"] = l[i].split(" ")[0]
+                            res_t["time_zone"] = "gmt +" + str(l[i].split(" ")[-1].strip()[-1])
+                        if i == range(len(l)):
+                            break
                     elif res_t.get("time_zone") is not None and i == len(l) - 2:
                         res_t["username"] = l[i].strip()
                     elif res_t.get("time_zone") is not None and i == len(l) - 1:
@@ -108,7 +108,7 @@ class Bot:
                         res_t["username"] = l[i].strip()
                     elif res_t.get("time_zone") is None and i == len(l) - 1:
                         res_t["note"] = l[i].strip()
-                if any(key != "note" and value is None for key, value in res_t.items()):
+                if any(key not in {"note", "username"} and value is None for key, value in res_t.items()):
                     raise ValueError("Message is invalid. Please provide the correct format")
                 else:
                     res.append(res_t)
